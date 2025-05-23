@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 import {
   HomeIcon,
   ArchiveBoxIcon,
@@ -27,7 +27,7 @@ export default function SidebarLeft() {
     { name: "Equipment" },
   ];
 
-  const handleClick = (itemName) => {
+  const handleClick = (itemName: SetStateAction<string>) => {
     setActiveItem(itemName);
     setSettingsOpen(false);
     setInventoryOpen(false);
