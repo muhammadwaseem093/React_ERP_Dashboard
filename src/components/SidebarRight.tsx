@@ -1,6 +1,8 @@
 import { PlusIcon, ArrowDownTrayIcon,Cog6ToothIcon,PowerIcon,UserIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 
+import { logoutUser } from "../api/auth";
+
 
 
 export default function SidebarRight() {
@@ -81,7 +83,7 @@ export default function SidebarRight() {
                 as="button"
                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
-                <PowerIcon className="w-4 h-4 mr-2" />
+                <PowerIcon className="w-4 h-4 mr-2"  onClick={logoutUser}/>
                 Logout
               </MenuItem>
             </div>

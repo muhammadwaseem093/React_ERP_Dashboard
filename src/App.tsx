@@ -1,29 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import LoginScreen from './pages/Login';
-import SignUpScreen from './pages/Signup';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRouter from './routes/AppRouter';
+import useSessionTimeout from './hooks/useSessionTimeout';
 
-function App() {
+const App:React.FC = () => {
+  const logoutCallback = () => {
+    localStorage.removeItem('accessToken');
+    window.location.href = '/login'; // Redirect to login page
+  };
+
+  useSessionTimeout({ logoutCallback, timeoutMinutes: 15 });
+
   return (
-    <Router>
-      <Routes>
-        {/* Public Route */}
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/register" element={<SignUpScreen />} />
-
-        {/* Private Routes inside Layout */}
-        <Route
-          path="/dashboard"
-          element={
-            <Layout>
-              <Dashboard />
-            </Layout>
-          }
-        />
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

@@ -39,3 +39,19 @@ export async function registerUser(userData:{username:string;email:string;passwo
         throw new Error(data.detail || "Registration Failed");
     }
 }
+
+export async function logoutUser():Promise<void>{
+    const res = await fetch("http://localhost:8000/logout",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+        },
+        body:JSON.stringify({}),
+    });
+
+    if (!res.ok){
+        const data = await res.json();
+        throw new Error(data.detail || "Logout Failed");
+    }
+
+}
