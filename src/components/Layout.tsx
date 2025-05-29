@@ -1,6 +1,6 @@
 import Header from './Header';
 import SidebarLeft from './SidebarLeft';
-import SidebarRight from './SidebarRIght';
+import SidebarRight from './SidebarRight';
 
 export default function Layout({children}:{children:React.ReactNode}){
     return (
