@@ -6,7 +6,7 @@ import {
   ShoppingCartIcon,
   UsersIcon,
   ChartBarIcon,
-  QuestionMarkCircleIcon,
+  // QuestionMarkCircleIcon,
   Cog6ToothIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
@@ -128,8 +128,8 @@ export default function SidebarLeft() {
             : "hover:bg-blue-100 text-gray-800"
         }`}
       >
-        <QuestionMarkCircleIcon className="w-5 h-5" />
-        <span>Help</span>
+        {/* <QuestionMarkCircleIcon className="w-5 h-5" />
+        <span>Help</span> */}
       </div>
 
       {/* Settings Dropdown */}
