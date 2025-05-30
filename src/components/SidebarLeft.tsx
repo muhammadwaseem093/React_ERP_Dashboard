@@ -18,9 +18,10 @@ export default function SidebarLeft() {
   const navigate = useNavigate();
 
   const settingsSubItems = [
-    { name: "Users", route: "/settings/users" },
     { name: "Parameters", route: "/settings/parameters" },
     { name: "Preferences", route: "/settings/preferences" },
+    { name: "Plugin", route:"/settings/plugin"},
+    { name: "Users", route: "/settings/users" },
   ];
 
   const inventorySubItems = [

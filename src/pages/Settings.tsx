@@ -9,6 +9,9 @@ const Settings: React.FC = () => {
         <Link to="/settings/users" className="block text-blue-600 hover:underline">
           Manage Users
         </Link>
+        <Link to="/settings/plugin" className="block text-blue-600 hover:underline">
+          Manage Modules
+        </Link>
         {/* Future: Roles, Permissions */}
       </div>
     </div>

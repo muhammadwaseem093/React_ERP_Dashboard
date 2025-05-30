@@ -6,6 +6,7 @@ import RegisterScreen from '../pages/Signup';
 import Layout from '../components/Layout';
 import Settings from '../pages/Settings';
 import UserList from '../features/users/UserList';
+import ModuleList from '../features/module/ModuleList';
 
 const isAuthencticated = () => {
     return !!localStorage.getItem("accessToken");
@@ -50,6 +51,16 @@ const AppRouter: React.FC = () => {
                 <ProtectedRoute>
                     <Layout>
                         <UserList />
+                    </Layout>
+                </ProtectedRoute>
+             }
+             />
+             <Route 
+             path='/settings/plugin'
+             element={
+                <ProtectedRoute>
+                    <Layout>
+                        <ModuleList />
                     </Layout>
                 </ProtectedRoute>
              }
