@@ -2,7 +2,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow px-4 py-3 flex justify-between items-center">
       {/* Left Logo */}
-      <div className="text-xl font-bold text-green-600">FETAFLAME</div>
+      <div className="text-xl font-bold text-green-600">PROGRESSIVE AUTO ENG PVT LTD</div>
 
       {/* Right Search */}
       <div className="flex items-center gap-2 border px-3 py-1 rounded-lg">

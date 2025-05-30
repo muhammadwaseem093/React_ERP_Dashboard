@@ -3,13 +3,14 @@ import { getUsers, deleteUser, createUser, updateUser } from "../../api/users";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import UserForm from "../../features/users/UserForm";
 import { Dialog, DialogTitle } from "@headlessui/react";
+import { getRoles, type Role } from '../../api/roles';
 
 type User = {
   id: string;
   username: string;
   email: string;
-  is_active: boolean;
-  role_id: number;
+  is_active: boolean | string;
+  role_id: number | string;
 };
 
 const UserList: React.FC = () => {
@@ -19,13 +20,24 @@ const UserList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   const loadUsers = async () => {
     setLoading(true);
     const data = await getUsers();
+    console.log("Fetched users:", data); // Debug output
     setUsers(data);
     setFilteredUsers(data);
+    setCurrentPage(1);
     setLoading(false);
+  };
+
+  const fetchRoles = async () => {
+    const data = await getRoles();
+    console.log("Fetched roles:", data); // Debug output
+    setRoles(data);
   };
 
   const handleDelete = async (id: string) => {
@@ -35,6 +47,7 @@ const UserList: React.FC = () => {
 
   const handleSearch = (text: string) => {
     setSearch(text);
+    setCurrentPage(1);
     const filtered = users.filter(
       (user) =>
         user.username.toLowerCase().includes(text.toLowerCase()) ||
@@ -46,11 +59,27 @@ const UserList: React.FC = () => {
   const clearSearch = () => {
     setSearch("");
     setFilteredUsers(users);
+    setCurrentPage(1);
   };
 
   useEffect(() => {
+    fetchRoles();
     loadUsers();
   }, []);
+
+  const getRoleName = (role_id: number | string) => {
+    const role = roles.find((r) => String(r.id) === String(role_id));
+    return role ? role.name : 'Unknown';
+  };
+
+  const isUserActive = (value: boolean | string) => {
+    return value === true || value === 'true';
+  };
+
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -58,7 +87,6 @@ const UserList: React.FC = () => {
 
       {/* Filter + Create User Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        {/* Search with clear (X) button */}
         <div className="relative w-full sm:w-3/4">
           <input
             type="text"
@@ -76,16 +104,18 @@ const UserList: React.FC = () => {
             </button>
           )}
         </div>
-
-        {/* Create User button */}
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditUser(null);
+            setIsModalOpen(true);
+          }}
           className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
         >
           <PlusIcon className="w-4 h-4" />
           <span className="text-sm font-medium">Create User</span>
         </button>
       </div>
+
       <Dialog
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -93,14 +123,20 @@ const UserList: React.FC = () => {
       >
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black opacity-30" />
-
           <div className="bg-white rounded-lg shadow-lg w-full max-w-xl z-50 p-6 relative">
             <DialogTitle className="text-lg font-semibold mb-4">
               {editUser ? "Edit User" : "Create New User"}
             </DialogTitle>
-
             <UserForm
-              initialData={editUser ?? undefined}
+              initialData={
+                editUser
+                  ? {
+                      ...editUser,
+                      role_id: typeof editUser.role_id === "string" ? Number(editUser.role_id) : editUser.role_id,
+                      is_active: editUser.is_active === true || editUser.is_active === "true",
+                    }
+                  : undefined
+              }
               onCancel={() => {
                 setIsModalOpen(false);
                 setEditUser(null);
@@ -108,13 +144,8 @@ const UserList: React.FC = () => {
               onSubmit={async (formData) => {
                 try {
                   if (editUser) {
-                    // Editing user
-                    const dataToUpdate = {
-                      ...(formData as unknown as Record<string, unknown>),
-                    };
-                    await updateUser(editUser.id, dataToUpdate);
+                    await updateUser(editUser.id, formData);
                   } else {
-                    // Creating new user
                     await createUser(formData);
                   }
                   setIsModalOpen(false);
@@ -138,79 +169,34 @@ const UserList: React.FC = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Username
-              </th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-2 sm:px-4 py-3 text-center text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Role ID
-              </th>
-              <th className="px-2 sm:px-4 py-3 text-center text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Active
-              </th>
-              <th className="px-4 sm:px-6 py-3 text-center text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Username</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Role</th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Active</th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="text-center py-6 text-sm text-gray-400"
-                >
-                  Loading users...
-                </td>
-              </tr>
-            ) : filteredUsers.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="text-center py-6 text-sm text-gray-400"
-                >
-                  No users found.
-                </td>
-              </tr>
+              <tr><td colSpan={5} className="text-center py-6 text-sm text-gray-400">Loading users...</td></tr>
+            ) : paginatedUsers.length === 0 ? (
+              <tr><td colSpan={5} className="text-center py-6 text-sm text-gray-400">No users found.</td></tr>
             ) : (
-              filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 sm:px-6 py-3 text-gray-700 text-xs sm:text-sm">
-                    {user.username}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 text-gray-700 text-xs sm:text-sm">
-                    {user.email}
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 text-center text-gray-700 text-xs sm:text-sm">
-                    {user.role_id}
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 text-center">
-                    <span
-                      className={`inline-block px-2 py-1 text-[10px] sm:text-xs rounded-full font-medium ${
-                        user.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {user.is_active ? "Active" : "Inactive"}
+              paginatedUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-gray-700 text-sm">{user.username}</td>
+                  <td className="px-4 py-3 text-gray-700 text-sm">{user.email}</td>
+                  <td className="px-4 py-3 text-center text-gray-700 text-sm">{getRoleName(user.role_id)}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={`inline-block px-2 py-1 text-xs rounded-full font-medium ${isUserActive(user.is_active) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {isUserActive(user.is_active) ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="px-4 sm:px-6 py-3 text-center">
-                    <button
-                      className="text-indigo-600 hover:text-indigo-800 text-xs sm:text-sm font-medium mr-3"
-                      onClick={() => {
-                        setEditUser(user);
-                        setIsModalOpen(true);
-                      }}
-                    >
+                  <td className="px-4 py-3 text-center">
+                    <button onClick={() => { setEditUser(user); setIsModalOpen(true); }} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium mr-3">
                       Edit
                     </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium"
-                    >
+                    <button onClick={() => handleDelete(user.id)} className="text-red-500 hover:text-red-700 text-sm font-medium">
                       Delete
                     </button>
                   </td>
@@ -219,6 +205,27 @@ const UserList: React.FC = () => {
             )}
           </tbody>
         </table>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center items-center mt-4 space-x-2 p-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className={`px-3 py-1 rounded-md border ${currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-700">
+            Page {currentPage} of {Math.ceil(filteredUsers.length / usersPerPage)}
+          </span>
+          <button
+            disabled={currentPage === Math.ceil(filteredUsers.length / usersPerPage)}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className={`px-3 py-1 rounded-md border ${currentPage === Math.ceil(filteredUsers.length / usersPerPage) ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
