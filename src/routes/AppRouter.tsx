@@ -4,6 +4,8 @@ import Dashboard from '../pages/Dashboard';
 import LoginScreen from '../pages/Login';
 import RegisterScreen from '../pages/Signup';
 import Layout from '../components/Layout';
+import Settings from '../pages/Settings';
+import UserList from '../features/users/UserList';
 
 const isAuthencticated = () => {
     return !!localStorage.getItem("accessToken");
@@ -29,6 +31,25 @@ const AppRouter: React.FC = () => {
                 <ProtectedRoute>
                     <Layout>
                         <Dashboard />
+                    </Layout>
+                </ProtectedRoute>
+             }
+             />
+             <Route 
+             path='/settings'
+             element={
+                <ProtectedRoute>
+                    <Layout>
+                        <Settings />
+                    </Layout>
+                </ProtectedRoute>
+             }
+             /><Route 
+             path='/settings/users'
+             element={
+                <ProtectedRoute>
+                    <Layout>
+                        <UserList />
                     </Layout>
                 </ProtectedRoute>
              }

@@ -1,4 +1,5 @@
-import { useState, type SetStateAction } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   HomeIcon,
   ArchiveBoxIcon,
@@ -14,23 +15,27 @@ export default function SidebarLeft() {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const navigate = useNavigate();
 
   const settingsSubItems = [
-    { name: "Parameters" },
-    { name: "Preferences" },
-  ];
-  const inventorySubItems = [
-    { name: "Item List" },
-    { name: "Main Item" },
-    { name: "Non-Core Item" },
-    { name: "Common Item" },
-    { name: "Equipment" },
+    { name: "Users", route: "/settings/users" },
+    { name: "Parameters", route: "/settings/parameters" },
+    { name: "Preferences", route: "/settings/preferences" },
   ];
 
-  const handleClick = (itemName: SetStateAction<string>) => {
+  const inventorySubItems = [
+    { name: "Item List", route: "/inventory/item-list" },
+    { name: "Main Item", route: "/inventory/main-item" },
+    { name: "Non-Core Item", route: "/inventory/non-core-item" },
+    { name: "Common Item", route: "/inventory/common-item" },
+    { name: "Equipment", route: "/inventory/equipment" },
+  ];
+
+  const handleClick = (itemName: string, route?: string) => {
     setActiveItem(itemName);
     setSettingsOpen(false);
     setInventoryOpen(false);
+    if (route) navigate(route);
   };
 
   return (
@@ -39,7 +44,7 @@ export default function SidebarLeft() {
 
       {/* Dashboard */}
       <div
-        onClick={() => handleClick("Dashboard")}
+        onClick={() => handleClick("Dashboard", "/dashboard")}
         className={`p-2 rounded cursor-pointer text-sm flex items-center gap-3 ${
           activeItem === "Dashboard"
             ? "bg-blue-500 text-white"
@@ -50,7 +55,7 @@ export default function SidebarLeft() {
         <span>Dashboard</span>
       </div>
 
-      {/* Inventory with Dropdown */}
+      {/* Inventory Dropdown */}
       <div
         onClick={() => {
           setActiveItem("Inventory");
@@ -76,10 +81,10 @@ export default function SidebarLeft() {
 
       {inventoryOpen && (
         <div className="ml-7 mt-1 space-y-1">
-          {inventorySubItems.map(({ name }) => (
+          {inventorySubItems.map(({ name, route }) => (
             <div
               key={name}
-              onClick={() => setActiveItem(name)}
+              onClick={() => handleClick(name, route)}
               className={`cursor-pointer p-1.5 rounded text-sm ${
                 activeItem === name
                   ? "bg-blue-400 text-white"
@@ -92,15 +97,15 @@ export default function SidebarLeft() {
         </div>
       )}
 
-      {/* Other main items */}
+      {/* Other Items */}
       {[
-        { name: "Sales Orders", icon: ShoppingCartIcon },
-        { name: "Suppliers", icon: UsersIcon },
-        { name: "Reports", icon: ChartBarIcon },
-      ].map(({ name, icon: Icon }) => (
+        { name: "Sales Orders", icon: ShoppingCartIcon, route: "/sales-orders" },
+        { name: "Suppliers", icon: UsersIcon, route: "/suppliers" },
+        { name: "Reports", icon: ChartBarIcon, route: "/reports" },
+      ].map(({ name, icon: Icon, route }) => (
         <div
           key={name}
-          onClick={() => handleClick(name)}
+          onClick={() => handleClick(name, route)}
           className={`p-2 rounded cursor-pointer text-sm flex items-center gap-3 ${
             activeItem === name
               ? "bg-blue-500 text-white"
@@ -116,7 +121,7 @@ export default function SidebarLeft() {
 
       {/* Help */}
       <div
-        onClick={() => handleClick("Help")}
+        onClick={() => handleClick("Help", "/help")}
         className={`p-2 rounded cursor-pointer text-sm flex items-center gap-3 ${
           activeItem === "Help"
             ? "bg-blue-500 text-white"
@@ -127,7 +132,7 @@ export default function SidebarLeft() {
         <span>Help</span>
       </div>
 
-      {/* Settings with Dropdown */}
+      {/* Settings Dropdown */}
       <div
         onClick={() => {
           setActiveItem("Settings");
@@ -153,10 +158,10 @@ export default function SidebarLeft() {
 
       {settingsOpen && (
         <div className="ml-7 mt-1 space-y-1">
-          {settingsSubItems.map(({ name }) => (
+          {settingsSubItems.map(({ name, route }) => (
             <div
               key={name}
-              onClick={() => setActiveItem(name)}
+              onClick={() => handleClick(name, route)}
               className={`cursor-pointer p-1.5 rounded text-sm ${
                 activeItem === name
                   ? "bg-blue-400 text-white"
