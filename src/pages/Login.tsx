@@ -28,8 +28,9 @@ export default function LoginScreen() {
 
       // Delay navigation to show loader
       setTimeout(() => {
-        setLoading(false);
+        
         navigate("/dashboard");
+        setLoading(false);
       }, 1500);
     } catch (err) {
       setLoading(false);

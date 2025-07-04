@@ -17,6 +17,7 @@ export async function loginUser(credentials:{username:string;password:string;}):
     });
 
     const data = await res.json()
+    console.log("Login API Response:" , data);
 
     if (!res.ok){
         throw new Error(data.detail || "Login Failed")
@@ -25,7 +26,7 @@ export async function loginUser(credentials:{username:string;password:string;}):
 }
 
 
-export async function registerUser(userData:{username:string;email:string;password:string;}):Promise<void>{
+export async function registerUser(userData:{username: string; email:string;password:string;}):Promise<void>{
     const res = await fetch("http://localhost:8000/signup",{
         method:"POST",
         headers:{
