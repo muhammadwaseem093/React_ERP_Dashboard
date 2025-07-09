@@ -5,7 +5,6 @@ import ModuleViewModal from "./ModuleViewModal";
 import ModuleDeleteModal from "./ModuleDeleteModal";
 import { EyeIcon, PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid";
 
-
 interface Module {
   id: string;
   name: string;
@@ -21,7 +20,7 @@ const ModuleList: React.FC = () => {
   const [viewModule, setViewModule] = useState<Module | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
-  const [currentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const modulesPerPage = 10;
 
   const fetchModules = async () => {
@@ -33,16 +32,24 @@ const ModuleList: React.FC = () => {
 
   useEffect(() => { fetchModules(); }, []);
 
+  // Reset to page 1 when search changes
+  useEffect(() => { setCurrentPage(1); }, [search]);
+
   const filtered = modules.filter((m) =>
     m.name.toLowerCase().includes(search.toLowerCase()) ||
     m.id.toLowerCase().includes(search.toLowerCase())
   );
-  const paginated = filtered.slice((currentPage - 1) * modulesPerPage, currentPage * modulesPerPage);
+
+  const paginated = filtered.slice(
+    (currentPage - 1) * modulesPerPage,
+    currentPage * modulesPerPage
+  );
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Manage Modules</h2>
 
+      {/* Search & Create Button */}
       <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
         <input
           type="text"
@@ -59,6 +66,7 @@ const ModuleList: React.FC = () => {
         </button>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto shadow bg-white rounded-xl">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -96,27 +104,45 @@ const ModuleList: React.FC = () => {
         </table>
       </div>
 
+      {/* Pagination */}
+      <div className="flex justify-center items-center mt-4 space-x-2 p-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className={`px-3 py-1 rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400" : "bg-blue-500 text-white hover:bg-blue-600"}`}
+        >
+          Previous
+        </button>
+        <span className="text-sm text-gray-700">
+          Page {currentPage} of {Math.max(1, Math.ceil(filtered.length / modulesPerPage))}
+        </span>
+        <button
+          disabled={currentPage === Math.ceil(filtered.length / modulesPerPage) || filtered.length === 0}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className={`px-3 py-1 rounded ${currentPage === Math.ceil(filtered.length / modulesPerPage) || filtered.length === 0 ? "bg-gray-200 text-gray-400" : "bg-blue-500 text-white hover:bg-blue-600"}`}
+        >
+          Next
+        </button>
+      </div>
+
       {/* Modals */}
       <ModuleFormModal
-  open={modalOpen}
-  onClose={() => { setModalOpen(false); setEditModule(null); }}
-  editModule={editModule}
-  fetchModules={fetchModules}
-/>
-
-<ModuleViewModal
-  open={viewModalOpen}
-  onClose={() => setViewModalOpen(false)}
-  viewModule={viewModule}
-/>
-
-<ModuleDeleteModal
-  open={deleteModalOpen}
-  onClose={() => { setDeleteModalOpen(false); setModuleToDelete(null); }}
-  moduleToDelete={moduleToDelete}
-  fetchModules={fetchModules}
-/>
-
+        open={modalOpen}
+        onClose={() => { setModalOpen(false); setEditModule(null); }}
+        editModule={editModule}
+        fetchModules={fetchModules}
+      />
+      <ModuleViewModal
+        open={viewModalOpen}
+        onClose={() => setViewModalOpen(false)}
+        viewModule={viewModule}
+      />
+      <ModuleDeleteModal
+        open={deleteModalOpen}
+        onClose={() => { setDeleteModalOpen(false); setModuleToDelete(null); }}
+        moduleToDelete={moduleToDelete}
+        fetchModules={fetchModules}
+      />
     </div>
   );
 };

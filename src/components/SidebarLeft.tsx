@@ -20,7 +20,7 @@ export default function SidebarLeft() {
   const settingsSubItems = [
     { name: "Parameters", route: "/settings/parameters" },
     { name: "Preferences", route: "/settings/preferences" },
-    { name: "Plugin", route:"/settings/plugin"},
+    { name: "Modules", route:"/settings/modules"},
     { name: "Users", route: "/settings/users" },
   ];
 
