@@ -3,6 +3,10 @@ import React, { useEffect, useState } from "react";
 import { getModules } from "../../api/modules";
 import { getSubmodules } from "../../api/submodules";
 import SubmoduleFormModal from "./SubmoduleFormModal";
+import SubmoduleViewModal from "./SubmoduleViewModal";
+import SubmoduleDeleteModal from "./SubmoduleDeleteModal";
+import { AiFillFilePdf, AiFillFileExcel } from "react-icons/ai";
+import { BsFileBarGraph } from "react-icons/bs";
 import {
   EyeIcon,
   PencilIcon,
@@ -29,6 +33,13 @@ const ModuleViewInParameter: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [submoduleModalOpen, setSubmoduleModalOpen] = useState(false);
   const [submodules, setSubmodules] = useState<SubModule[]>([]);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewSubmodule, setViewSubmodule] = useState<SubModule | null>(null);
+  const [editSubModule, setEditSubModule] = useState<SubModule | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [submoduleToDelete, setSubmoduleToDelete] = useState<SubModule | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchModules = async () => {
@@ -60,6 +71,20 @@ const ModuleViewInParameter: React.FC = () => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+  const handleExportPDF = () => {
+    // TODO: generate and download PDF
+    console.log("PDF Export triggered");
+  };
+
+  const handleExportXLSX = () => {
+    // TODO: generate and download Excel
+    console.log("Excel Export triggered");
+  };
+
+  const handleViewReport = () => {
+    // TODO: show detailed modal or navigate to report screen
+    console.log("Report View triggered");
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -105,6 +130,31 @@ const ModuleViewInParameter: React.FC = () => {
           ))}
         </select>
       </div>
+      <div className="flex justify-end items-center mr-3 gap-2 mb-2">
+        <button
+          onClick={handleExportPDF}
+          className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-md"
+          title="Export PDF"
+        >
+          <AiFillFilePdf className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={handleExportXLSX}
+          className="p-1.5 bg-green-500 hover:bg-green-600 text-white rounded-md"
+          title="Export Excel"
+        >
+          <AiFillFileExcel className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={handleViewReport}
+          className="p-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-md"
+          title="View Report"
+        >
+          <BsFileBarGraph className="w-5 h-5" />
+        </button>
+      </div>
 
       {/* Table */}
       <div className="overflow-x-auto shadow bg-white rounded-xl">
@@ -112,8 +162,12 @@ const ModuleViewInParameter: React.FC = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold">ID</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold">Name</th>
-              <th className="px-4 py-3 text-center text-xs font-semibold">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold">
+                Name
+              </th>
+              <th className="px-4 py-3 text-center text-xs font-semibold">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -123,13 +177,34 @@ const ModuleViewInParameter: React.FC = () => {
                   <td className="px-4 py-3">{item.id}</td>
                   <td className="px-4 py-3">{item.name}</td>
                   <td className="px-4 py-3 text-center flex justify-center gap-2">
-                    <button className="text-yellow-500 hover:text-yellow-700">
+                    <button
+                      onClick={() => {
+                        setViewSubmodule(item);
+                        setViewModalOpen(true);
+                      }}
+                      className="text-yellow-500 hover:text-yellow-700"
+                    >
                       <EyeIcon className="w-5 h-5" />
                     </button>
-                    <button className="text-indigo-500 hover:text-indigo-700">
+
+                    <button
+                      onClick={() => {
+                        setEditSubModule(item); // set submodule to be edited
+                        setSubmoduleModalOpen(true); // open modal
+                      }}
+                      className="text-indigo-500 hover:text-indigo-700"
+                    >
                       <PencilIcon className="w-5 h-5" />
                     </button>
-                    <button className="text-red-500 hover:text-red-700">
+
+                    <button
+                      onClick={() => {
+                        setSubmoduleToDelete(item);
+                        setDeleteModalOpen(true);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                      title="Delete"
+                    >
                       <TrashIcon className="w-5 h-5" />
                     </button>
                   </td>
@@ -180,9 +255,29 @@ const ModuleViewInParameter: React.FC = () => {
       {/* Modal */}
       <SubmoduleFormModal
         open={submoduleModalOpen}
-        onClose={() => setSubmoduleModalOpen(false)}
-        editSubModule={null}
+        onClose={() => {
+          setSubmoduleModalOpen(false);
+          setEditSubModule(null);
+        }}
+        editSubModule={editSubModule}
         selectedModuleId={selectedModuleId}
+        fetchSubmodules={fetchSubmodules}
+      />
+      <SubmoduleViewModal
+        open={viewModalOpen}
+        onClose={() => {
+          setViewModalOpen(false);
+          setViewSubmodule(null);
+        }}
+        viewSubmodule={viewSubmodule}
+      />
+      <SubmoduleDeleteModal
+        open={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setSubmoduleToDelete(null);
+        }}
+        submoduleToDelete={submoduleToDelete}
         fetchSubmodules={fetchSubmodules}
       />
     </div>

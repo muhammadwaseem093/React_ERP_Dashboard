@@ -4,6 +4,8 @@ import ModuleFormModal from "./ModuleFormModal";
 import ModuleViewModal from "./ModuleViewModal";
 import ModuleDeleteModal from "./ModuleDeleteModal";
 import { EyeIcon, PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { AiFillFilePdf, AiFillFileExcel } from "react-icons/ai";
+import { BsFileBarGraph } from "react-icons/bs";
 
 interface Module {
   id: string;
@@ -44,6 +46,20 @@ const ModuleList: React.FC = () => {
     (currentPage - 1) * modulesPerPage,
     currentPage * modulesPerPage
   );
+  const handleExportPDF = () => {
+    // TODO: generate and download PDF
+    console.log("PDF Export triggered");
+  };
+
+  const handleExportXLSX = () => {
+    // TODO: generate and download Excel
+    console.log("Excel Export triggered");
+  };
+
+  const handleViewReport = () => {
+    // TODO: show detailed modal or navigate to report screen
+    console.log("Report View triggered");
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -65,6 +81,31 @@ const ModuleList: React.FC = () => {
           <PlusIcon className="w-4 h-4" /> Create
         </button>
       </div>
+      <div className="flex justify-end items-center mr-3 gap-2 mb-2">
+              <button
+                onClick={handleExportPDF}
+                className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-md"
+                title="Export PDF"
+              >
+                <AiFillFilePdf className="w-5 h-5" />
+              </button>
+      
+              <button
+                onClick={handleExportXLSX}
+                className="p-1.5 bg-green-500 hover:bg-green-600 text-white rounded-md"
+                title="Export Excel"
+              >
+                <AiFillFileExcel className="w-5 h-5" />
+              </button>
+      
+              <button
+                onClick={handleViewReport}
+                className="p-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-md"
+                title="View Report"
+              >
+                <BsFileBarGraph className="w-5 h-5" />
+              </button>
+            </div>
 
       {/* Table */}
       <div className="overflow-x-auto shadow bg-white rounded-xl">

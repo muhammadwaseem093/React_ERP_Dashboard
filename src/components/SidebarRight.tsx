@@ -11,36 +11,36 @@ export default function SidebarRight() {
     { name: "Export", shortcut: "ctrl + s", icon: ArrowDownTrayIcon },
   ];
 
-  const items = [
-    {
-      name: "Fiery Chicken Zinger Burger",
-      image: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
-    },
-    {
-      name: "Saucy Chicken Wrap",
-      image: "https://cdn-icons-png.flaticon.com/512/1046/1046856.png",
-    },
-    {
-      name: "Bold Fire Wrap",
-      image: "https://cdn-icons-png.flaticon.com/512/1046/1046774.png",
-    },
-    {
-      name: "Fiesta Fire Fries",
-      image: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
-    },
-    {
-      name: "Spice Blaze Wings",
-      image: "https://cdn-icons-png.flaticon.com/512/5787/5787193.png",
-    },
-    {
-      name: "Chicken Tender Pops",
-      image: "https://cdn-icons-png.flaticon.com/512/5787/5787196.png",
-    },
-    {
-      name: "Sizzling Patty Burger",
-      image: "https://cdn-icons-png.flaticon.com/512/5787/5787169.png",
-    },
-  ];
+  // const items = [
+  //   {
+  //     name: "Fiery Chicken Zinger Burger",
+  //     image: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
+  //   },
+  //   {
+  //     name: "Saucy Chicken Wrap",
+  //     image: "https://cdn-icons-png.flaticon.com/512/1046/1046856.png",
+  //   },
+  //   {
+  //     name: "Bold Fire Wrap",
+  //     image: "https://cdn-icons-png.flaticon.com/512/1046/1046774.png",
+  //   },
+  //   {
+  //     name: "Fiesta Fire Fries",
+  //     image: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
+  //   },
+  //   {
+  //     name: "Spice Blaze Wings",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5787/5787193.png",
+  //   },
+  //   {
+  //     name: "Chicken Tender Pops",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5787/5787196.png",
+  //   },
+  //   {
+  //     name: "Sizzling Patty Burger",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5787/5787169.png",
+  //   },
+  // ];
 
   return (
     <aside className="w-75 bg-white p-8 border-l mr-6 hidden lg:block">
@@ -112,7 +112,7 @@ export default function SidebarRight() {
       <hr className="mb-6"></hr>
 
       {/* Fast Moving Items */}
-      <div>
+      {/* <div>
         <div className="font-bold mb-4 text-sm">Fast Moving Items</div>
         <ul className="text-sm text-gray-700 space-y-6">
           {items.map(({ name, image }) => (
@@ -126,7 +126,7 @@ export default function SidebarRight() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </aside>
   );
 }
